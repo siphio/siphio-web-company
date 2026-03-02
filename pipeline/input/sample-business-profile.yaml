@@ -1,0 +1,15 @@
+name: "CloudMetrics"
+description: "Real-time analytics dashboard for SaaS businesses"
+features:
+  - title: "Live Dashboard"
+    description: "See your metrics update in real-time with zero lag"
+  - title: "Smart Alerts"
+    description: "Get notified before problems become outages"
+  - title: "Team Reports"
+    description: "Share beautiful reports with your entire team"
+audience: "SaaS founders and product managers"
+industry: "fintech"
+tone: "professional"
+brand_colors:
+  primary: "#3B82F6"
+  secondary: "#10B981"

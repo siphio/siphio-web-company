@@ -1,0 +1,59 @@
+# Controlled Vocabulary — All word pools for agent block tagging and selection
+# These are the ONLY terms agents use. No free-text reasoning.
+
+mood:
+  - clean          # Minimal, whitespace-forward
+  - friendly       # Approachable, illustrated, warm
+  - bold           # High contrast, strong typography
+  - elegant        # Refined, serif accents, subtle
+  - playful        # Colorful, animated, casual
+  - professional   # Structured, corporate, serious
+  - techy          # Developer-focused, code-forward
+
+density:
+  - sparse         # Large whitespace, few elements
+  - balanced       # Moderate content, comfortable spacing
+  - dense          # Compact, information-rich, tight spacing
+
+layout:
+  - centered-stack    # Vertically stacked, center-aligned
+  - split-horizontal  # Two-column left/right
+  - bento-asymmetric  # Mixed-size grid cards (3+2, 2x3)
+  - grid-uniform      # Equal-size columns (2, 3, or 4)
+  - single-column     # Full-width, stacked content
+  - masonry           # Pinterest-style variable height
+
+section_purpose:
+  - hero              # Above-the-fold primary section
+  - features          # Product/service capability showcase
+  - pricing           # Plan comparison and selection
+  - testimonials      # Social proof and customer quotes
+  - cta               # Conversion prompt with action
+  - footer            # Page footer with links
+  - navbar            # Navigation header
+  - faq               # Frequently asked questions
+  - stats             # Metrics and numbers showcase
+  - team              # People/team showcase
+  - logos             # Partner/integration logo cloud
+  - contact           # Lead capture form
+  - gallery           # Visual showcase grid
+  - blog              # Content preview cards
+
+visual_type:
+  - illustration      # Hand-drawn or vector illustrations
+  - screenshot        # Product UI screenshots
+  - icon-cluster      # Grouped icons or logos
+  - decorative        # Abstract shapes, blobs, patterns
+  - photography       # Real photos (rare in this aesthetic)
+
+headline_pattern:
+  - mixed-bold-italic   # Bold sans + italic serif (signature)
+  - all-bold            # Uniform bold sans
+  - italic-lead         # Italic opening + bold closing
+  - minimal             # Regular weight, understated
+
+cta_style:
+  - pill-filled       # Rounded, solid background
+  - pill-outline      # Rounded, border only
+  - rectangular       # Standard border-radius
+  - text-link         # No button, underlined text

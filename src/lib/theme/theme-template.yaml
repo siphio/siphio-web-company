@@ -1,0 +1,43 @@
+# Default theme template — derived from context/style-profile.yaml Section 9
+# These defaults are overridden by business profile brand colors during derivation
+
+name: "siphio-light"
+
+palette:
+  background: "#FFFFFF"
+  surface: "#F9FAFB"
+  border: "#E5E7EB"
+  text_primary: "#111827"
+  text_secondary: "#6B7280"
+  text_muted: "#9CA3AF"
+  accent_primary: "#22C55E"
+  accent_secondary: "#3B82F6"
+  accent_warm: "#F59E0B"
+  cta_fill: "#111827"
+  cta_text: "#FFFFFF"
+
+typography:
+  heading_font: "Plus Jakarta Sans"
+  heading_weight: 700
+  accent_font: "DM Serif Display"
+  accent_weight: 400
+  accent_style: "italic"
+  body_font: "Inter"
+  body_weight: 400
+  body_line_height: 1.6
+
+borders:
+  radius_sm: "8px"
+  radius_md: "12px"
+  radius_lg: "16px"
+  radius_pill: "9999px"
+
+shadows:
+  card: "0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06)"
+  elevated: "0 4px 12px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04)"
+
+effects:
+  grain: false
+  glassmorphism: false
+  mesh_gradient: false
+  soft_gradient: true

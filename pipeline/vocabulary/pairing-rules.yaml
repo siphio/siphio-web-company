@@ -1,0 +1,47 @@
+# Pairing rules — used by Block Selector (Phase 2) to prevent visual clashes
+# Reference: PRD Section 4.2 (Block Selection Decision Tree), SC-003
+rules:
+  hero:
+    pairs_well_with: [logos, features]
+    never_after: [cta, footer]
+    max_adjacent_same_density: 1
+    notes: "Hero is always first content section after navbar"
+
+  features:
+    pairs_well_with: [hero, testimonials, stats, cta]
+    never_after: [features]
+    max_adjacent_same_density: 2
+    notes: "Primary features → detail features OK if different layout type"
+
+  pricing:
+    pairs_well_with: [features, testimonials, faq, cta]
+    never_after: [pricing, hero]
+    max_adjacent_same_density: 1
+    notes: "Pricing needs context (features) before it"
+
+  testimonials:
+    pairs_well_with: [features, pricing, cta]
+    never_after: [testimonials, logos]
+    max_adjacent_same_density: 1
+
+  cta:
+    pairs_well_with: [testimonials, faq, features, pricing]
+    never_after: [hero, cta]
+    max_adjacent_same_density: 1
+    notes: "CTA repeats at end, never directly after hero"
+
+  footer:
+    pairs_well_with: [cta]
+    never_after: [hero, features]
+    max_adjacent_same_density: 1
+    notes: "Footer is always last section"
+
+  navbar:
+    pairs_well_with: [hero]
+    never_after: []
+    max_adjacent_same_density: 1
+
+  faq:
+    pairs_well_with: [pricing, cta, testimonials]
+    never_after: [hero, faq]
+    max_adjacent_same_density: 1

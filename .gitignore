@@ -18,3 +18,16 @@ Thumbs.db
 # Python
 __pycache__/
 *.pyc
+
+# Next.js
+.next/
+out/
+
+# Build outputs
+.claude/orchestrator/dist/
+tsconfig.tsbuildinfo
+
+# PIV runtime artifacts
+.agents/orchestrator.log
+.agents/orchestrator.pid
+.agents/orchestrator.signal

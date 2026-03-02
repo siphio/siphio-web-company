@@ -1,0 +1,395 @@
+# ============================================================
+# MOODBOARD STYLE PROFILE
+# Derived from 12 curated Pinterest references (6 websites + 6 widgets)
+# ============================================================
+
+meta:
+  source_boards:
+    websites: "https://uk.pinterest.com/hugemarley/website-concepts/"
+    widgets: "https://uk.pinterest.com/hugemarley/widget-concepts-bento-grids/"
+  total_references: 12
+  analysis_date: "2026-03-02"
+
+# ============================================================
+# 1. COLOR PROFILE
+# ============================================================
+color:
+  dominant_scheme: "light"             # 10/12 references use light backgrounds
+  background:
+    primary: "white"                   # #FFFFFF or near-white
+    secondary: "off-white-gray"        # #F5F5F7 — subtle gray tint
+    accent_bg: "soft-lavender"         # #E8E4F0 — seen in Medusa, light blue washes
+    dark_variant: "warm-charcoal"      # #1A1A2E — Quiety only (1/12)
+  accent_colors:
+    # Ranked by frequency across all 12 references
+    - name: "fresh-green"
+      hex_range: "#22C55E → #16A34A"
+      frequency: "4/12"               # MynaUI POS, Built to Help You Grow, Students, Finerrr
+      usage: "CTA buttons, pill badges, status indicators"
+    - name: "warm-amber"
+      hex_range: "#F59E0B → #D97706"
+      frequency: "2/12"               # TalentTrail underlines, Quiety accents
+      usage: "accent underlines, highlight text, floating elements"
+    - name: "soft-blue"
+      hex_range: "#93C5FD → #60A5FA"
+      frequency: "3/12"               # TalentTrail border, Medusa bg, Infamix
+      usage: "background washes, borders, decorative elements"
+    - name: "coral-red"
+      hex_range: "#EF4444 → #DC2626"
+      frequency: "2/12"               # MynaUI Library CTA, autumn illustration
+      usage: "CTA buttons, illustration accents"
+    - name: "dark-navy"
+      hex_range: "#1E293B → #0F172A"
+      frequency: "3/12"               # Infamix CTA, Modernbanc CTA, nav elements
+      usage: "primary CTA fill, nav text, headlines"
+  gradients:
+    style: "subtle-linear"             # Soft, not dramatic
+    examples:
+      - "white → off-white-gray (vertical)"
+      - "soft-lavender → white (radial)"
+      - "warm-charcoal → deep-purple (Quiety dark variant only)"
+  shadows:
+    style: "soft-diffused"
+    intensity: "low"                   # Cards float gently, never harsh drop shadows
+    color: "rgba(0,0,0,0.04-0.08)"
+
+# ============================================================
+# 2. TYPOGRAPHY PROFILE
+# ============================================================
+typography:
+  headline_pattern: "mixed-weight-dual-font"
+  # THE SIGNATURE MOVE: Nearly every reference mixes bold sans + italic serif
+  # in the SAME headline. This is the single strongest typographic pattern.
+  headline:
+    primary_weight: "bold"             # 700-800
+    primary_style: "sans-serif"        # Clean geometric sans
+    accent_weight: "regular-italic"    # 400 italic
+    accent_style: "serif-italic"       # Elegant contrast within headline
+    size: "48-72px"                    # Desktop hero headlines
+    examples:
+      - "Seamless Transactions, *Happier* Customers"      # bold sans + italic serif
+      - "Helping you achieve *peace of mind*"              # bold sans + italic serif
+      - "Your digital library, *beautifully* organized"    # bold sans + italic serif
+      - "Good ideas don't convert. **Great design does.**" # italic lead + bold punch
+  subheadline:
+    weight: "regular"
+    style: "sans-serif"
+    color: "muted-gray"               # #6B7280 range
+    size: "16-18px"
+    max_width: "540px"                 # Always constrained for readability
+  body:
+    weight: "regular"
+    style: "sans-serif"
+    color: "medium-gray"              # #4B5563 range
+    line_height: "1.6-1.7"
+  font_families_observed:
+    sans: ["Inter", "Plus Jakarta Sans", "DM Sans", "Satoshi"]
+    serif: ["Playfair Display", "DM Serif Display", "Lora"]
+
+# ============================================================
+# 3. LAYOUT PROFILE
+# ============================================================
+layout:
+  hero_pattern: "centered-stack"
+  # Nearly every hero: badge → headline → subtext → CTA → trust bar
+  hero_anatomy:
+    - element: "pill-badge"
+      description: "Small rounded pill above headline with category/announcement"
+      frequency: "7/12"
+      style: "bordered or light-filled, small text, subtle"
+    - element: "headline"
+      description: "Large mixed-font headline, centered"
+      frequency: "12/12"
+    - element: "subheadline"
+      description: "1-2 line description, muted color, max-width constrained"
+      frequency: "11/12"
+    - element: "cta-group"
+      description: "1-2 buttons, primary filled + secondary outline/ghost"
+      frequency: "10/12"
+    - element: "trust-bar"
+      description: "Logo row of trusted companies/partners"
+      frequency: "6/12"
+      style: "grayscale logos, 'Trusted by teams at' prefix"
+    - element: "hero-visual"
+      description: "Illustration, 3D graphic, or product screenshot"
+      frequency: "8/12"
+      placement: "below CTA or spanning bottom of hero"
+
+  feature_pattern: "bento-asymmetric-grid"
+  feature_anatomy:
+    grid_type: "asymmetric"           # NOT uniform columns
+    common_layouts:
+      - "3-col top + 2-col bottom (3+2)"    # Finerrr
+      - "2x3 mixed-size cards"               # Built to Help You Grow
+      - "3-col equal cards"                  # Great Design Does
+      - "2x2 large feature cards"            # Students in Mind
+    card_style:
+      background: "white"
+      border: "1px solid #E5E7EB or none"
+      border_radius: "12-16px"
+      padding: "24-32px"
+      contains: "icon/illustration + headline + description + optional product screenshot"
+    card_content_pattern:
+      - "category-label (small caps, muted)"
+      - "feature-headline (bold, 20-24px)"
+      - "feature-description (regular, muted, 14-16px)"
+      - "visual (product screenshot, illustration, or icon cluster)"
+
+  spacing:
+    section_gap: "80-120px"
+    card_gap: "16-24px"
+    content_max_width: "1200px"
+    hero_vertical_padding: "80-140px"
+    density: "airy"                   # Generous whitespace throughout
+
+# ============================================================
+# 4. IMAGERY & ILLUSTRATION PROFILE
+# ============================================================
+imagery:
+  primary_style: "illustration-forward"
+  # 8/12 references use illustration over photography
+  illustration_types:
+    - type: "scenic-landscape"
+      frequency: "3/12"               # MynaUI POS (green hills), MynaUI Library (autumn), Modernbanc (mountains)
+      description: "Hand-drawn or flat-style nature scenes spanning bottom of hero"
+      palette: "warm naturals — greens, oranges, earth tones"
+    - type: "3d-character"
+      frequency: "1/12"               # Quiety
+      description: "Stylized 3D character interacting with product"
+    - type: "product-screenshot"
+      frequency: "5/12"               # Modernbanc, Finerrr, Built to Grow, Students
+      description: "Actual UI screenshots embedded in cards, sometimes in device mockups"
+    - type: "icon-cluster"
+      frequency: "4/12"               # Great Design Does, Medusa, Infamix
+      description: "Grouped branded icons or app icons floating in card space"
+    - type: "decorative-elements"
+      frequency: "6/12"
+      description: "Floating dots, arcs, wave lines, geometric shapes"
+      examples: ["colored dots on orbit path", "sine wave line", "subtle grid patterns"]
+
+  photography:
+    usage: "minimal"                  # Only team avatars and 1 scenic hero (Modernbanc)
+    team_avatars: "circular crop, soft colored backgrounds"
+    stock_photos: "none observed"
+
+  device_mockups:
+    phone: "2/12"                     # Students in Mind
+    laptop: "0/12"
+    browser_frame: "1/12"             # Modernbanc product table
+
+# ============================================================
+# 5. COMPONENT PATTERNS
+# ============================================================
+components:
+  buttons:
+    primary:
+      shape: "pill-rounded"            # border-radius: 9999px or 24px+
+      fill: "solid"
+      colors: ["dark-navy", "fresh-green", "coral-red"]
+      text: "white"
+      padding: "12px 24px"
+      has_arrow: true                  # Trailing → arrow common
+    secondary:
+      shape: "pill-rounded"
+      fill: "outline or ghost"
+      border: "1px solid border-color"
+      text: "dark"
+
+  badges:
+    shape: "pill"
+    size: "small"
+    style: "bordered or light-fill"
+    content: "announcement or category label"
+    placement: "above headline, centered"
+
+  cards:
+    border_radius: "12-16px"
+    background: "white"
+    elevation: "none or subtle shadow"
+    border: "subtle gray or none"
+    content_alignment: "left-aligned within card"
+
+  navigation:
+    style: "clean-horizontal"
+    logo_position: "left"
+    links: "center"
+    cta: "right"
+    background: "transparent or white"
+    height: "64-80px"
+
+  trust_bars:
+    layout: "horizontal logo row"
+    logo_style: "grayscale, uniform height"
+    prefix_text: "Trusted by teams at / TRUSTED BY CUSTOMERS AT"
+    separator: "subtle divider line or background band"
+
+# ============================================================
+# 6. UX & INTERACTION PATTERNS
+# ============================================================
+ux_patterns:
+  scroll_behavior: "section-by-section reveal"
+  hover_states: "subtle lift on cards, color shift on buttons"
+  micro_interactions:
+    - "floating/orbiting elements (decorative dots)"
+    - "gentle parallax on illustrations"
+    - "smooth scroll between sections"
+  content_hierarchy: "badge → headline → subtext → action → proof → visual"
+  reading_flow: "center-out"          # Eyes start center, expand outward
+  cta_placement: "always above the fold, repeated at section ends"
+
+# ============================================================
+# 7. OVERALL AESTHETIC SUMMARY
+# ============================================================
+aesthetic:
+  primary_vibe: "friendly-modern-saas"
+  descriptors:
+    - "clean"
+    - "airy"
+    - "illustration-forward"
+    - "professional-but-approachable"
+    - "polished"
+    - "contemporary"
+  NOT_descriptors:                     # What this aesthetic explicitly avoids
+    - "dark-moody"                     # Only 1/12 uses dark bg
+    - "brutalist"
+    - "maximalist"
+    - "corporate-stiff"
+    - "neon-cyberpunk"
+    - "retro-vintage"
+  closest_references:
+    - "Linear homepage (typography + spacing, NOT the dark mode)"
+    - "Vercel marketing (clean + developer-friendly)"
+    - "Stripe (illustration quality + card layouts)"
+    - "Notion marketing (friendly + illustrated)"
+  tension_note: |
+    The moodboard leans heavily toward LIGHT, illustration-rich, friendly-SaaS
+    aesthetics. While earlier discussions referenced "the Linear look" (dark,
+    mesh gradients, grain), the actual curated references suggest the user
+    prefers Linear's TYPOGRAPHY and SPACING patterns applied to light,
+    illustration-forward layouts. The dark aesthetic should be available as a
+    variant/option rather than the default.
+
+# ============================================================
+# 8. NANO BANANA 2 — BASE PROMPT DERIVATION
+# ============================================================
+nano_banana_2:
+  base_prompt: |
+    Clean, modern SaaS illustration style. Soft color palette with white or
+    light gray backgrounds. Flat or semi-flat vector aesthetic with subtle
+    gradients and soft shadows. Professional but approachable and friendly.
+    Generous whitespace. No harsh edges. Smooth curves and rounded shapes.
+    Consistent with contemporary fintech and developer tool branding.
+
+  category_prompts:
+    hero_illustration: |
+      Scenic landscape illustration spanning full width. Rolling hills,
+      organic curves, nature elements (trees, flowers, fields). Warm earth
+      tones with one brand accent color. Semi-flat vector style with subtle
+      depth. Positioned at bottom of composition with white space above for
+      text overlay.
+
+    icon_set: |
+      Minimal line icon, single-weight stroke, rounded corners, consistent
+      2px stroke width. Single accent color fill on key element. White or
+      light background. Clean geometric construction. 24x24 or 48x48 grid
+      aligned.
+
+    bento_card_graphic: |
+      Small product illustration for feature card. Isometric or flat
+      perspective. Shows a UI element or data visualization. Soft shadows,
+      pastel accent colors. Contained within rounded rectangle boundary.
+      Clean and minimal, no background noise.
+
+    background_texture: |
+      Subtle gradient background. Soft transition from white to very light
+      tint (lavender, blue, or green). Optional: very faint dot grid or
+      noise texture at 3-5% opacity. No harsh patterns. Ethereal and
+      clean.
+
+    decorative_element: |
+      Abstract floating shape — soft gradient blob, translucent circle,
+      or geometric form. Pastel color with 40-60% opacity. Blurred edges.
+      Used as background accent, not focal element. No hard borders.
+
+# ============================================================
+# 9. THEME ENGINE — DEFAULT CONFIGURATION
+# ============================================================
+theme:
+  name: "siphio-light"
+  palette:
+    background: "#FFFFFF"
+    surface: "#F9FAFB"
+    border: "#E5E7EB"
+    text_primary: "#111827"
+    text_secondary: "#6B7280"
+    text_muted: "#9CA3AF"
+    accent_primary: "#22C55E"          # Fresh green (most common in moodboard)
+    accent_secondary: "#3B82F6"        # Soft blue
+    accent_warm: "#F59E0B"             # Amber for highlights
+    cta_fill: "#111827"                # Dark navy default
+    cta_text: "#FFFFFF"
+
+  typography:
+    heading_font: "Plus Jakarta Sans"  # or Inter, DM Sans
+    heading_weight: 700
+    accent_font: "DM Serif Display"    # Italic serif for mixed headlines
+    accent_weight: 400
+    accent_style: "italic"
+    body_font: "Inter"
+    body_weight: 400
+    body_line_height: 1.6
+
+  borders:
+    radius_sm: "8px"
+    radius_md: "12px"
+    radius_lg: "16px"
+    radius_pill: "9999px"
+
+  shadows:
+    card: "0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06)"
+    elevated: "0 4px 12px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04)"
+
+  effects:
+    grain: false                       # Not prominent in moodboard
+    glassmorphism: false               # Not prominent in moodboard
+    mesh_gradient: false               # Not prominent in moodboard
+    soft_gradient: true                # Subtle background washes
+
+# ============================================================
+# 10. SECTION FLOW TEMPLATE — DERIVED FROM REFERENCES
+# ============================================================
+section_flow:
+  recommended_order:
+    - section: "navigation"
+      block_type: "navbar"
+      notes: "Clean horizontal, logo left, links center, CTA right"
+
+    - section: "hero"
+      block_type: "hero"
+      notes: "Centered stack: badge → mixed-font headline → subtext → CTA group"
+      has_illustration: true
+      has_trust_bar: true
+
+    - section: "social-proof"
+      block_type: "logo-cloud"
+      notes: "Grayscale logo bar, 'Trusted by' prefix, can merge into hero"
+
+    - section: "features-primary"
+      block_type: "feature-grid"
+      notes: "Bento asymmetric grid (3+2 or 2x3), cards with product screenshots"
+
+    - section: "features-detail"
+      block_type: "feature-cards"
+      notes: "3-column equal cards with icon + headline + description"
+
+    - section: "team-or-testimonial"
+      block_type: "team / testimonial"
+      notes: "Circular avatars, orbit/arc layout, or card testimonials"
+
+    - section: "cta-final"
+      block_type: "cta"
+      notes: "Repeat CTA with email capture or action buttons"
+
+    - section: "footer"
+      block_type: "footer"
+      notes: "Clean, minimal link columns"

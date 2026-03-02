@@ -1,0 +1,13 @@
+prd:
+  path: PRD.md
+  status: complete
+  generated_at: "2026-03-02T00:00:00Z"
+  phases_defined: [1, 2, 3, 4]
+
+phases:
+  1: { plan: not_started, execution: not_started, validation: not_run }
+  2: { plan: not_started, execution: not_started, validation: not_run }
+  3: { plan: not_started, execution: not_started, validation: not_run }
+  4: { plan: not_started, execution: not_started, validation: not_run }
+
+last_updated: "2026-03-02T00:00:00Z"

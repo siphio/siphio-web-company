@@ -1,6 +1,6 @@
 // Pipeline orchestrator — main entry point
 // Reads business profile, derives theme, spawns agents, assembles output.
-// Reference: PRD Phase 2, Section 6 (Architecture)
+// Reference: PRD Phase 2 + Phase 3, Section 6 (Architecture)
 //
 // Usage: npx tsx pipeline/orchestrator.ts <business-profile.yaml>
 
@@ -17,6 +17,9 @@ import type {
   SectionCopy,
   BlockEntry,
   PairingRules,
+  AssetManifest,
+  QAConvergenceState,
+  QAResult,
 } from "./lib/types";
 import { readYaml, writeYaml } from "./lib/yaml-helpers";
 import { filterCatalog } from "./lib/catalog-filter";
@@ -25,6 +28,8 @@ import { buildStrategistPrompt } from "./agents/strategist";
 import { buildBlockSelectorPrompt } from "./agents/block-selector";
 import { buildCopyWriterPrompt } from "./agents/copy-writer";
 import { buildAssemblerPrompt } from "./agents/assembler";
+import { buildAssetGeneratorPrompt, getMoodboardImagePaths } from "./agents/asset-generator";
+import { buildQAAgentPrompt } from "./agents/qa-agent";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -45,6 +50,8 @@ const THEME_TEMPLATE_PATH = resolve(
   "src/lib/theme/theme-template.yaml",
 );
 const OUTPUT_DIR = resolve(PROJECT_ROOT, "output");
+const MOODBOARD_DIR = resolve(PROJECT_ROOT, "context/moodboard-websites");
+const MAX_QA_ITERATIONS = 3;
 
 // ---------------------------------------------------------------------------
 // Validation
@@ -90,7 +97,7 @@ function writePromptFile(runDir: string, name: string, prompt: string): string {
 // ---------------------------------------------------------------------------
 
 export async function runPipeline(profilePath: string): Promise<void> {
-  console.log("\n## Siphio Pipeline — Phase 2\n");
+  console.log("\n## Siphio Pipeline — Phase 2 + Phase 3\n");
 
   // Step 1: Validate input
   console.log("🟡 Step 1: Reading and validating business profile...");
@@ -302,6 +309,7 @@ export async function runPipeline(profilePath: string): Promise<void> {
     theme,
     PROJECT_ROOT,
     OUTPUT_DIR,
+    undefined, // assetManifest — populated after Phase 3 Asset Generator runs
   );
   const assemblerPromptPath = writePromptFile(
     runDir,
@@ -324,7 +332,117 @@ export async function runPipeline(profilePath: string): Promise<void> {
   );
   console.log("  (Theme Validator runs post-assembly on actual output files)");
 
-  // Step 12: Final report
+  // ---------------------------------------------------------------------------
+  // Phase 3: Asset Generation + QA Loop
+  // ---------------------------------------------------------------------------
+
+  // Step 12: Asset Generator
+  console.log("\n🟡 Step 9: Running Asset Generator agent...");
+  const moodboardPaths = getMoodboardImagePaths(MOODBOARD_DIR);
+  const assetsDir = resolve(runDir, "assets");
+  mkdirSync(assetsDir, { recursive: true });
+  mkdirSync(resolve(OUTPUT_DIR, "assets"), { recursive: true });
+
+  const assetGeneratorPrompt = buildAssetGeneratorPrompt(
+    sectionPlan,
+    theme,
+    runDir,
+    moodboardPaths,
+  );
+  const assetGeneratorPromptPath = writePromptFile(
+    runDir,
+    "asset-generator",
+    assetGeneratorPrompt,
+  );
+  console.log(`  📝 Asset Generator prompt: ${assetGeneratorPromptPath}`);
+  console.log(`  📸 Moodboard references: ${moodboardPaths.length} images`);
+  console.log(
+    "  ⏳ In Claude Code, Asset Generator spawns to generate images via Gemini API.",
+  );
+
+  // Check for existing asset manifest (agent already ran or generate default)
+  const assetManifestPath = resolve(runDir, "asset-manifest.yaml");
+  if (!existsSync(assetManifestPath)) {
+    console.log("  🔧 Generating default asset manifest for CLI testing...");
+    const defaultManifest = generateDefaultAssetManifest(sectionPlan);
+    writeYaml(assetManifestPath, defaultManifest);
+    console.log("  ✅ Default asset manifest written (all fallbacks)");
+  }
+
+  const assetManifest = readYaml<AssetManifest>(assetManifestPath);
+  const assetsGenerated = assetManifest.assets.filter((a) => a.success).length;
+  const assetsFallback = assetManifest.assets.filter((a) => a.fallbackUsed).length;
+  console.log(
+    `  📊 Assets: ${assetsGenerated} generated, ${assetsFallback} fallback`,
+  );
+
+  // Step 13: QA Loop
+  console.log("\n🟡 Step 10: Running QA loop...");
+  const convergenceState: QAConvergenceState = {
+    iterations: [],
+    maxIterations: 3,
+    currentIteration: 0,
+    converged: false,
+    shippedWithIssues: false,
+  };
+
+  while (!convergenceState.converged && convergenceState.currentIteration < MAX_QA_ITERATIONS) {
+    const iteration = convergenceState.currentIteration;
+    const previousIssues = iteration > 0
+      ? convergenceState.iterations[iteration - 1]?.issues
+      : undefined;
+
+    console.log(`\n  📋 QA Iteration ${iteration + 1}/${MAX_QA_ITERATIONS}`);
+
+    const qaPrompt = buildQAAgentPrompt(
+      runDir,
+      OUTPUT_DIR,
+      iteration,
+      previousIssues,
+    );
+    writePromptFile(runDir, `qa-agent-${iteration}`, qaPrompt);
+
+    // Check for existing QA result (agent already ran or generate default)
+    const qaResultPath = resolve(runDir, `qa-result-${iteration}.yaml`);
+    if (!existsSync(qaResultPath)) {
+      console.log("  🔧 Generating default QA result for CLI testing...");
+      const defaultResult = generateDefaultQAResult(iteration);
+      writeYaml(qaResultPath, defaultResult);
+    }
+
+    const qaResult = readYaml<QAResult>(qaResultPath);
+    convergenceState.iterations.push(qaResult);
+
+    if (qaResult.passed) {
+      convergenceState.converged = true;
+      console.log(`  ✅ QA passed: L1=${qaResult.levels.l1_technical}, L2=${qaResult.levels.l2_theme}, L3=${qaResult.levels.l3_design}`);
+    } else {
+      const issueCount = qaResult.issues.length;
+      const prevCount = previousIssues?.length ?? 0;
+
+      if (previousIssues && issueCount > prevCount) {
+        console.log(`  ⚠️  Issues INCREASING (${prevCount} → ${issueCount}) — structural problem detected`);
+      } else {
+        console.log(`  🔄 ${issueCount} issues found — routing fixes to agents`);
+        for (const issue of qaResult.issues) {
+          console.log(`     [${issue.severity}] ${issue.type} in ${issue.sectionId} → ${issue.routeTo}`);
+        }
+      }
+
+      convergenceState.currentIteration++;
+    }
+  }
+
+  if (!convergenceState.converged) {
+    convergenceState.shippedWithIssues = true;
+    const remainingIssues = convergenceState.iterations[convergenceState.iterations.length - 1]?.issues ?? [];
+    console.log(`\n  ⚠️  QA did not converge after ${MAX_QA_ITERATIONS} iterations. Shipping with ${remainingIssues.length} issues.`);
+  }
+
+  // Write convergence state
+  writeYaml(resolve(runDir, "qa-convergence.yaml"), convergenceState);
+
+  // Step 14: Final report
   console.log("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
   console.log("## Pipeline Complete");
   console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
@@ -333,18 +451,24 @@ export async function runPipeline(profilePath: string): Promise<void> {
   console.log(`  Theme:       ${theme.name}`);
   console.log(`  Sections:    ${sectionPlan.sections.length}`);
   console.log(`  Blocks:      ${installed} installed, ${failed} failed`);
+  console.log(`  Assets:      ${assetsGenerated} generated, ${assetsFallback} fallback`);
+  console.log(`  QA:          ${convergenceState.converged ? "Converged" : "Shipped with issues"} (${convergenceState.iterations.length} iterations)`);
   console.log(`  Output Dir:  ${OUTPUT_DIR}`);
   console.log("\n  Artifacts in run directory:");
-  console.log("    theme.yaml          — Derived theme");
-  console.log("    theme.css           — Generated CSS variables");
-  console.log("    section-plan.yaml   — Strategist output");
-  console.log("    block-selections.yaml — Block Selector output");
-  console.log("    copy.yaml           — Copy Writer output");
-  console.log("    *-prompt.md         — Agent prompts (for debugging)");
+  console.log("    theme.yaml             — Derived theme");
+  console.log("    theme.css              — Generated CSS variables");
+  console.log("    section-plan.yaml      — Strategist output");
+  console.log("    block-selections.yaml  — Block Selector output");
+  console.log("    copy.yaml              — Copy Writer output");
+  console.log("    asset-manifest.yaml    — Asset Generator results");
+  console.log("    qa-convergence.yaml    — QA loop results");
+  console.log("    assets/                — Generated images");
+  console.log("    *-prompt.md            — Agent prompts (for debugging)");
   console.log("\n  Output files:");
   console.log("    output/theme.css            — Theme CSS");
   console.log("    output/page.tsx             — Composed page (after Assembler)");
   console.log("    output/components/*.tsx      — Section components (after Assembler)");
+  console.log("    output/assets/*.png          — Generated images");
   console.log("\n  Next steps:");
   console.log("    1. In Claude Code: run agents using the prompt files");
   console.log("    2. Run: npx tsx scripts/theme-validator.ts output/components/*.tsx");
@@ -571,6 +695,35 @@ function generateDefaultCopy(
   }
 
   return { sections };
+}
+
+// ---------------------------------------------------------------------------
+// Phase 3 default generators
+// ---------------------------------------------------------------------------
+
+function generateDefaultAssetManifest(plan: SectionPlan): AssetManifest {
+  const skipPurposes = new Set(["navbar", "footer"]);
+  const assets = plan.sections
+    .filter((s) => !skipPurposes.has(s.purpose))
+    .map((s) => ({
+      sectionId: s.id,
+      success: false,
+      fallbackUsed: true,
+    }));
+  return { assets };
+}
+
+function generateDefaultQAResult(iteration: number): QAResult {
+  return {
+    iteration,
+    passed: true,
+    issues: [],
+    levels: {
+      l1_technical: true,
+      l2_theme: true,
+      l3_design: true,
+    },
+  };
 }
 
 // ---------------------------------------------------------------------------

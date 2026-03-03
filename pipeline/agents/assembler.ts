@@ -11,6 +11,7 @@ import type {
   BlockChoice,
   SectionCopy,
   CopyEntry,
+  AssetManifest,
 } from "../lib/types";
 import type { Theme } from "../../src/lib/theme/types";
 
@@ -134,6 +135,7 @@ export function buildAssemblerPrompt(
   theme: Theme,
   projectDir: string,
   outputDir: string,
+  assetManifest?: AssetManifest,
 ): string {
   const themeCss = buildThemeCss(theme);
 
@@ -298,6 +300,36 @@ export { ComponentName };
 - Keep layout structure and Tailwind utility classes from the source block.
 - Replace only text content and theme-violating color/font classes.
 - Preserve any icons, decorative elements, and structural markup.
+
+### Animation Wrappers
+
+Import animation components from \`@/components/animations\` and wrap section content based on section type:
+
+| Section Type | Animation | Notes |
+|-------------|-----------|-------|
+| Hero | \`FadeInUpDelayed\` on subtitle (delay 0.2) + CTA (delay 0.4) | Do NOT animate the hero headline — it must be visible immediately |
+| Features (grid) | \`StaggerContainer\` + \`StaggerItem\` + \`HoverLiftCard\` | Each card staggers in with hover lift |
+| Features (bento) | \`FadeInUp\` on each cell with manual \`FadeInUpDelayed\` | Delay based on cell position (0, 0.1, 0.2...) |
+| Pricing | \`StaggerContainer\` + \`StaggerItem\` + \`HoverLiftCard\` | Pricing tier cards stagger in |
+| Testimonials | \`StaggerContainer\` + \`StaggerItem\` | Text blocks stagger in, no hover |
+| CTA | \`FadeInUp\` on the entire section | Simple fade-in for call-to-action |
+| Logo bar | \`StaggerContainer\` + \`StaggerItem\` | Logos stagger in left to right |
+| Footer | None | Footers do not animate |
+| Navbar | None | Navbars do not animate |
+
+Import only the animations you need per component. Example:
+\`\`\`tsx
+import { FadeInUpDelayed } from "@/components/animations";
+\`\`\`
+
+Wrap section content in animation components — never modify block source code for animation. Animation wrappers go AROUND existing content.
+
+### Asset Integration
+${assetManifest ? `
+Assets have been generated. For sections with successful assets, replace placeholder SVG \`src\` attributes with the generated image path:
+${assetManifest.assets.filter(a => a.success && a.imagePath).map(a => `- Section \`${a.sectionId}\`: Use \`${a.imagePath}\``).join("\n")}
+
+For sections where \`fallbackUsed: true\`, keep the existing placeholder SVG behavior.` : "No asset manifest provided. Keep existing placeholder SVG behavior for all sections."}
 
 ## Per-Section Instructions
 

@@ -1,7 +1,14 @@
 // Pipeline state interfaces — used by all agents and the orchestrator
 // Reference: PRD Phase 2, Section 6 (Architecture)
+// Extended: Phase 3 — Asset Generation & QA Loop
 
 import type { BusinessProfile, Theme } from "@/lib/theme/types";
+
+// Re-export Phase 3 types for single import point
+export type { AssetCategory, AssetRequest, AssetResult, AssetManifest } from "./asset-types";
+export type { QAIssueType, QARouteTarget, QAIssue, QAResult, QAConvergenceState } from "./qa-types";
+export { ASSET_CATEGORIES } from "./asset-types";
+export { ISSUE_ROUTE_MAP } from "./qa-types";
 
 // --- Strategist output ---
 
@@ -12,6 +19,7 @@ export interface SectionEntry {
   feature_index?: number;
   layout_preference: string;
   visual_requirement: string;
+  asset_path?: string;
 }
 
 export interface SectionPlan {
@@ -59,6 +67,8 @@ export interface PipelineRun {
   copy: SectionCopy;
   run_dir: string;
   output_dir: string;
+  assets?: import("./asset-types").AssetManifest;
+  qaState?: import("./qa-types").QAConvergenceState;
 }
 
 // --- Block catalog entry (matches block-catalog.yaml structure) ---

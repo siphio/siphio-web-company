@@ -27,6 +27,9 @@ out/
 .claude/orchestrator/dist/
 tsconfig.tsbuildinfo
 
+# Pipeline run directories (per-run state, not committed)
+pipeline/run-*/
+
 # PIV runtime artifacts
 .agents/orchestrator.log
 .agents/orchestrator.pid

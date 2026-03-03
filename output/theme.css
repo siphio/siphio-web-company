@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;700;1,400;700&family=DM+Serif+Display:ital,wght@0,400;1,400&family=Inter:ital,wght@0,400;500;600;1,400;500;600&display=swap');
+
+:root {
+  /* --- Palette (shadcn HSL convention: H S% L%) --- */
+  --background: 0 0% 100%;
+  --surface: 210 20% 98%;
+  --border: 220 13% 91%;
+  --text-primary: 220.9 100% 11%;
+  --text-secondary: 220 100% 46.1%;
+  --text-muted: 218.4 100% 45.3%;
+  --accent-primary: 217.2 91.2% 59.8%;
+  --accent-secondary: 159.7 100% 29.6%;
+  --accent-warm: 37.7 92.1% 50.2%;
+  --cta-fill: 220.9 100% 11%;
+  --cta-text: 0 0% 100%;
+
+  /* --- shadcn/ui standard aliases --- */
+  --foreground: 220.9 100% 11%;
+  --card: 210 20% 98%;
+  --card-foreground: 220.9 100% 11%;
+  --popover: 210 20% 98%;
+  --popover-foreground: 220.9 100% 11%;
+  --primary: 217.2 91.2% 59.8%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 159.7 100% 29.6%;
+  --secondary-foreground: 220.9 100% 11%;
+  --muted: 210 20% 98%;
+  --muted-foreground: 218.4 100% 45.3%;
+  --accent: 210 20% 98%;
+  --accent-foreground: 220.9 100% 11%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 100%;
+  --input: 220 13% 91%;
+  --ring: 217.2 91.2% 59.8%;
+
+  /* --- Typography --- */
+  --font-heading: 'Plus Jakarta Sans', sans-serif;
+  --font-heading-weight: 700;
+  --font-accent: 'DM Serif Display', serif;
+  --font-accent-weight: 400;
+  --font-accent-style: italic;
+  --font-body: 'Inter', sans-serif;
+  --font-body-weight: 400;
+  --font-body-line-height: 1.6;
+
+  /* --- Spacing (4px grid) --- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* --- Border Radius --- */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 9999px;
+  --radius: 0.75rem;
+
+  /* --- Shadows --- */
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-elevated: 0 4px 12px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
+
+  /* --- Effect flags (1 = on, 0 = off) --- */
+  --effect-grain: 0;
+  --effect-glassmorphism: 0;
+  --effect-mesh-gradient: 0;
+  --effect-soft-gradient: 1;
+}

@@ -1,0 +1,6 @@
+name: "OneThingApp"
+description: "The simplest task manager that does exactly one thing well"
+features:
+  - title: "Focus Mode"
+    description: "One task at a time, zero distractions, pure productivity"
+audience: "Minimalist productivity enthusiasts"

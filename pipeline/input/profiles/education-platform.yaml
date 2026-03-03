@@ -1,0 +1,12 @@
+name: "LearnPath"
+description: "Adaptive learning platform that personalizes education for every student"
+features:
+  - title: "Adaptive Lessons"
+    description: "AI adjusts difficulty based on student performance in real time"
+  - title: "Progress Tracking"
+    description: "Visual dashboards for students, parents, and teachers"
+  - title: "Peer Collaboration"
+    description: "Study groups and shared notes within a safe environment"
+audience: "K-12 students, parents, and educators"
+industry: "education"
+tone: "minimal"

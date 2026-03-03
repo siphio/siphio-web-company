@@ -6,6 +6,7 @@
 
 import { readFileSync, mkdirSync, writeFileSync, existsSync } from "fs";
 import { resolve } from "path";
+import { performance } from "perf_hooks";
 import yaml from "js-yaml";
 
 import { deriveTheme } from "../src/lib/theme/derive-theme";
@@ -99,18 +100,23 @@ function writePromptFile(runDir: string, name: string, prompt: string): string {
 export async function runPipeline(profilePath: string): Promise<void> {
   console.log("\n## Siphio Pipeline — Phase 2 + Phase 3\n");
 
+  const timings = new Map<string, number>();
+  const pipelineStart = performance.now();
+  let stepStart: number;
+
   // Step 1: Validate input
   console.log("🟡 Step 1: Reading and validating business profile...");
+  stepStart = performance.now();
   const profileRaw = readFileSync(resolve(profilePath), "utf-8");
   const profile = yaml.load(profileRaw) as BusinessProfile;
 
   const errors = validateProfile(profile);
   if (errors.length > 0) {
-    console.error("❌ Profile validation failed:");
-    for (const e of errors) console.error(`  ${e.field}: ${e.message}`);
-    process.exit(1);
+    const msg = errors.map((e) => `${e.field}: ${e.message}`).join(", ");
+    throw new Error(`Profile validation failed: ${msg}`);
   }
   console.log(`  ✅ Profile valid: ${profile.name}`);
+  timings.set("validation", performance.now() - stepStart);
 
   // Step 2: Generate run ID and create run directory
   const runId = `run-${Date.now()}`;
@@ -120,6 +126,7 @@ export async function runPipeline(profilePath: string): Promise<void> {
 
   // Step 3: Derive theme
   console.log("\n🟡 Step 2: Deriving theme...");
+  stepStart = performance.now();
   const templateTheme = readYaml<Theme>(THEME_TEMPLATE_PATH);
   const theme = deriveTheme(profile, templateTheme);
   const themeCSS = generateCSS(theme);
@@ -128,6 +135,7 @@ export async function runPipeline(profilePath: string): Promise<void> {
   writeFileSync(resolve(runDir, "theme.css"), themeCSS, "utf-8");
   console.log(`  ✅ Theme derived: "${theme.name}"`);
   console.log(`  Palette: accent=${theme.palette.accent_primary}, cta=${theme.palette.cta_fill}`);
+  timings.set("theme_derivation", performance.now() - stepStart);
 
   // Step 4: Present theme for approval
   console.log("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
@@ -196,6 +204,7 @@ export async function runPipeline(profilePath: string): Promise<void> {
 
   // Step 6: Pre-filter catalog for Block Selector
   console.log("\n🟡 Step 4: Pre-filtering block catalog...");
+  stepStart = performance.now();
   const pairingRules = readYaml<PairingRules>(PAIRING_RULES_PATH);
   const alreadySelected: string[] = [];
   const filteredCatalogs = new Map<string, BlockEntry[]>();
@@ -209,11 +218,19 @@ export async function runPipeline(profilePath: string): Promise<void> {
       previousPurpose,
     );
     filteredCatalogs.set(section.id, candidates);
-    console.log(
-      `  ${section.id} (${section.purpose}): ${candidates.length} candidates`,
-    );
+    if (candidates.length === 0) {
+      console.log(
+        `  ⚠️ ${section.id} (${section.purpose}): 0 candidates — will use generic fallback`,
+      );
+    } else {
+      console.log(
+        `  ${section.id} (${section.purpose}): ${candidates.length} candidates`,
+      );
+    }
     previousPurpose = section.purpose;
   }
+
+  timings.set("catalog_filtering", performance.now() - stepStart);
 
   // Step 7: Run Block Selector + Copy Writer in parallel
   console.log("\n🟡 Step 5: Running Block Selector + Copy Writer in parallel...");
@@ -283,8 +300,15 @@ export async function runPipeline(profilePath: string): Promise<void> {
 
   // Step 8: Install blocks via CLI
   console.log("\n🟡 Step 6: Installing blocks via shadcn CLI...");
+  stepStart = performance.now();
   const blockNames = blockSelections.sections.map((s) => s.block_name);
-  const installResults = installBlocks(blockNames, PROJECT_ROOT);
+  const alternativesMap = new Map<string, string[]>();
+  for (const s of blockSelections.sections) {
+    if (s.alternatives.length > 0) {
+      alternativesMap.set(s.block_name, s.alternatives);
+    }
+  }
+  const installResults = installBlocks(blockNames, PROJECT_ROOT, alternativesMap);
 
   let installed = 0;
   let failed = 0;
@@ -298,6 +322,7 @@ export async function runPipeline(profilePath: string): Promise<void> {
     }
   }
   console.log(`  📊 Installed: ${installed}/${blockNames.length} (${failed} failed)`);
+  timings.set("block_install", performance.now() - stepStart);
 
   // Step 9: Run Assembler agent
   console.log("\n🟡 Step 7: Running Assembler agent...");
@@ -338,6 +363,7 @@ export async function runPipeline(profilePath: string): Promise<void> {
 
   // Step 12: Asset Generator
   console.log("\n🟡 Step 9: Running Asset Generator agent...");
+  stepStart = performance.now();
   const moodboardPaths = getMoodboardImagePaths(MOODBOARD_DIR);
   const assetsDir = resolve(runDir, "assets");
   mkdirSync(assetsDir, { recursive: true });
@@ -375,9 +401,11 @@ export async function runPipeline(profilePath: string): Promise<void> {
   console.log(
     `  📊 Assets: ${assetsGenerated} generated, ${assetsFallback} fallback`,
   );
+  timings.set("asset_generation", performance.now() - stepStart);
 
   // Step 13: QA Loop
   console.log("\n🟡 Step 10: Running QA loop...");
+  stepStart = performance.now();
   const convergenceState: QAConvergenceState = {
     iterations: [],
     maxIterations: 3,
@@ -422,6 +450,13 @@ export async function runPipeline(profilePath: string): Promise<void> {
 
       if (previousIssues && issueCount > prevCount) {
         console.log(`  ⚠️  Issues INCREASING (${prevCount} → ${issueCount}) — structural problem detected`);
+        // SC-006: Identify stable sections to lock
+        const prevSectionIds = new Set(previousIssues.map((i) => i.sectionId));
+        const currSectionIds = new Set(qaResult.issues.map((i) => i.sectionId));
+        const stableSections = sectionPlan.sections
+          .filter((s) => !prevSectionIds.has(s.id) && !currSectionIds.has(s.id))
+          .map((s) => s.id);
+        console.log(`  🔒 Locked sections: ${stableSections.join(", ") || "none"}`);
       } else {
         console.log(`  🔄 ${issueCount} issues found — routing fixes to agents`);
         for (const issue of qaResult.issues) {
@@ -439,6 +474,8 @@ export async function runPipeline(profilePath: string): Promise<void> {
     console.log(`\n  ⚠️  QA did not converge after ${MAX_QA_ITERATIONS} iterations. Shipping with ${remainingIssues.length} issues.`);
   }
 
+  timings.set("qa_loop", performance.now() - stepStart);
+
   // Write convergence state
   writeYaml(resolve(runDir, "qa-convergence.yaml"), convergenceState);
 
@@ -454,6 +491,14 @@ export async function runPipeline(profilePath: string): Promise<void> {
   console.log(`  Assets:      ${assetsGenerated} generated, ${assetsFallback} fallback`);
   console.log(`  QA:          ${convergenceState.converged ? "Converged" : "Shipped with issues"} (${convergenceState.iterations.length} iterations)`);
   console.log(`  Output Dir:  ${OUTPUT_DIR}`);
+  const totalRuntime = performance.now() - pipelineStart;
+  timings.set("total", totalRuntime);
+
+  console.log("\n  ## Timing Breakdown");
+  for (const [step, ms] of timings) {
+    console.log(`    ${step.padEnd(20)} ${Math.round(ms)}ms`);
+  }
+
   console.log("\n  Artifacts in run directory:");
   console.log("    theme.yaml             — Derived theme");
   console.log("    theme.css              — Generated CSS variables");
@@ -727,24 +772,32 @@ function generateDefaultQAResult(iteration: number): QAResult {
 }
 
 // ---------------------------------------------------------------------------
-// CLI entry point
+// CLI entry point — only runs when this file is the direct entry point
 // ---------------------------------------------------------------------------
 
-const profileArg = process.argv[2];
+const isCLI =
+  process.argv[1]?.endsWith("orchestrator.ts") ||
+  process.argv[1]?.endsWith("orchestrator.js");
 
-if (!profileArg) {
-  console.log("Usage: npx tsx pipeline/orchestrator.ts <business-profile.yaml>");
-  console.log(
-    "\nRuns the Siphio landing page pipeline from business profile to assembled page.",
-  );
-  console.log("\nExample:");
-  console.log(
-    "  npx tsx pipeline/orchestrator.ts pipeline/input/sample-business-profile.yaml",
-  );
-  process.exit(0);
+if (isCLI) {
+  const profileArg = process.argv[2];
+
+  if (!profileArg) {
+    console.log(
+      "Usage: npx tsx pipeline/orchestrator.ts <business-profile.yaml>",
+    );
+    console.log(
+      "\nRuns the Siphio landing page pipeline from business profile to assembled page.",
+    );
+    console.log("\nExample:");
+    console.log(
+      "  npx tsx pipeline/orchestrator.ts pipeline/input/sample-business-profile.yaml",
+    );
+    process.exit(0);
+  }
+
+  runPipeline(profileArg).catch((err) => {
+    console.error("\n❌ Pipeline failed:", err.message);
+    process.exit(1);
+  });
 }
-
-runPipeline(profileArg).catch((err) => {
-  console.error("\n❌ Pipeline failed:", err.message);
-  process.exit(1);
-});

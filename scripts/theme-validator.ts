@@ -1,4 +1,5 @@
-import { readFileSync } from 'fs';
+import { readFileSync, readdirSync } from 'fs';
+import { resolve, join } from 'path';
 
 // Theme validator — scans generated .tsx files for hardcoded values outside theme tokens
 // Reference: PRD Section 4.1 — Theme Validator (non-AI script for speed)
@@ -110,31 +111,68 @@ function validateFile(filePath: string): Violation[] {
   return violations;
 }
 
-// CLI entry point
-const targetFile = process.argv[2];
+export { validateFile };
 
-if (!targetFile) {
-  console.log('Usage: npx tsx scripts/theme-validator.ts <file.tsx>');
-  console.log('Scans a .tsx file for hardcoded colors, fonts, and spacing outside the theme.');
+// CLI entry point
+const targetArg = process.argv[2];
+
+if (!targetArg) {
+  console.log('Usage: npx tsx scripts/theme-validator.ts <file.tsx|pattern>');
+  console.log('  Single file: npx tsx scripts/theme-validator.ts output/theme.css');
+  console.log('  Batch:       npx tsx scripts/theme-validator.ts output/components/*.tsx');
   process.exit(0);
 }
 
-try {
-  const violations = validateFile(targetFile);
-
-  if (violations.length === 0) {
-    console.log(`✅ No theme violations found in ${targetFile}`);
-    process.exit(0);
-  } else {
-    console.log(`❌ Found ${violations.length} theme violation(s) in ${targetFile}:\n`);
-    for (const v of violations) {
-      console.log(`  Line ${v.line}: [${v.type}] ${v.value}`);
-      console.log(`    → ${v.suggestion}\n`);
-    }
-    console.log(JSON.stringify(violations, null, 2));
-    process.exit(1);
+function resolveFiles(pattern: string): string[] {
+  if (!pattern.includes('*')) {
+    return [pattern];
   }
-} catch (err: any) {
-  console.error(`Error reading file: ${err.message}`);
-  process.exit(1);
+
+  const lastSlash = pattern.lastIndexOf('/');
+  const dir = pattern.substring(0, lastSlash) || '.';
+  const glob = pattern.substring(lastSlash + 1);
+  const ext = glob.replace('*', '');
+
+  try {
+    const dirFiles = readdirSync(resolve(dir)) as string[];
+    return dirFiles
+      .filter((f: string) => f.endsWith(ext))
+      .map((f: string) => join(dir, f));
+  } catch {
+    return [];
+  }
 }
+
+const files = resolveFiles(targetArg);
+
+if (files.length === 0) {
+  console.log(`⚠️  No files matched: ${targetArg}`);
+  process.exit(0);
+}
+
+let totalViolations = 0;
+let filesWithViolations = 0;
+
+for (const file of files) {
+  try {
+    const violations = validateFile(file);
+    totalViolations += violations.length;
+
+    if (violations.length === 0) {
+      console.log(`✅ ${file}: clean`);
+    } else {
+      filesWithViolations++;
+      console.log(`❌ ${file}: ${violations.length} violation(s)`);
+      for (const v of violations) {
+        console.log(`   Line ${v.line}: [${v.type}] ${v.value}`);
+        console.log(`     → ${v.suggestion}`);
+      }
+    }
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error(`⚠️  Error reading ${file}: ${message}`);
+  }
+}
+
+console.log(`\n📊 Summary: ${files.length} files scanned, ${totalViolations} violations in ${filesWithViolations} files`);
+process.exit(totalViolations > 0 ? 1 : 0);

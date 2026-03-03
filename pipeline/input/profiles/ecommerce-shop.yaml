@@ -1,0 +1,18 @@
+name: "CrateJoy"
+description: "Curated subscription boxes for lifestyle and wellness enthusiasts"
+features:
+  - title: "Curated Collections"
+    description: "Hand-picked products from artisan makers worldwide"
+  - title: "Flexible Plans"
+    description: "Monthly, quarterly, or gift subscriptions that suit your pace"
+  - title: "Surprise Themes"
+    description: "Each box follows a unique seasonal theme for discovery"
+  - title: "Easy Gifting"
+    description: "Send a box to anyone with a personalized note"
+  - title: "Member Perks"
+    description: "Exclusive discounts and early access to limited editions"
+audience: "Women 25-45 interested in lifestyle and wellness products"
+industry: "ecommerce"
+tone: "professional"
+brand_colors:
+  primary: "#EC4899"

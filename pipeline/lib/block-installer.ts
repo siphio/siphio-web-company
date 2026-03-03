@@ -14,12 +14,23 @@ import type { InstallResult } from "./types";
  */
 export function installBlocks(
   blockNames: string[],
-  projectDir: string
+  projectDir: string,
+  alternatives?: Map<string, string[]>
 ): InstallResult[] {
   const results: InstallResult[] = [];
 
   for (const name of blockNames) {
-    const result = installSingleBlock(name, projectDir);
+    let result = installSingleBlock(name, projectDir);
+    if (!result.success && alternatives?.has(name)) {
+      for (const alt of alternatives.get(name)!) {
+        const altResult = installSingleBlock(alt, projectDir);
+        if (altResult.success) {
+          result = { ...altResult, block_name: name };
+          console.log(`  🔄 ${name} → fallback to ${alt}`);
+          break;
+        }
+      }
+    }
     results.push(result);
   }
 

@@ -1,0 +1,12 @@
+name: "FlowBoard"
+description: "Collaborative project management for remote-first teams"
+features:
+  - title: "Real-time Boards"
+    description: "Drag-and-drop task boards that sync instantly across all devices"
+  - title: "Smart Workflows"
+    description: "Automate repetitive processes with customizable workflow triggers"
+  - title: "Team Insights"
+    description: "Track productivity trends with visual analytics dashboards"
+audience: "Remote team leads and product managers"
+industry: "saas"
+tone: "friendly"

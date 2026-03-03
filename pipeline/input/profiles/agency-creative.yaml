@@ -1,0 +1,17 @@
+name: "PixelForge"
+description: "Award-winning digital design agency crafting bold brand experiences"
+features:
+  - title: "Brand Identity"
+    description: "Complete visual identity systems from logo to guidelines"
+  - title: "Web Design"
+    description: "Conversion-optimized websites that tell your brand story"
+  - title: "Motion Graphics"
+    description: "Eye-catching animations for social media and product launches"
+  - title: "UX Strategy"
+    description: "Research-driven design decisions backed by user data"
+audience: "Startups and mid-market companies launching or rebranding"
+industry: "agency"
+tone: "bold"
+brand_colors:
+  primary: "#F59E0B"
+  secondary: "#7C3AED"

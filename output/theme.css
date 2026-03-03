@@ -8,8 +8,8 @@
   --text-primary: 220.9 100% 11%;
   --text-secondary: 220 100% 46.1%;
   --text-muted: 218.4 100% 45.3%;
-  --accent-primary: 217.2 91.2% 59.8%;
-  --accent-secondary: 159.7 100% 29.6%;
+  --accent-primary: 258.3 89.5% 66.3%;
+  --accent-secondary: 217.2 91.2% 59.8%;
   --accent-warm: 37.7 92.1% 50.2%;
   --cta-fill: 220.9 100% 11%;
   --cta-text: 0 0% 100%;
@@ -20,9 +20,9 @@
   --card-foreground: 220.9 100% 11%;
   --popover: 210 20% 98%;
   --popover-foreground: 220.9 100% 11%;
-  --primary: 217.2 91.2% 59.8%;
+  --primary: 258.3 89.5% 66.3%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 159.7 100% 29.6%;
+  --secondary: 217.2 91.2% 59.8%;
   --secondary-foreground: 220.9 100% 11%;
   --muted: 210 20% 98%;
   --muted-foreground: 218.4 100% 45.3%;
@@ -31,7 +31,7 @@
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 0 0% 100%;
   --input: 220 13% 91%;
-  --ring: 217.2 91.2% 59.8%;
+  --ring: 258.3 89.5% 66.3%;
 
   /* --- Typography --- */
   --font-heading: 'Plus Jakarta Sans', sans-serif;
